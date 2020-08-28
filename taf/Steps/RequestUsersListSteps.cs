@@ -35,7 +35,7 @@ namespace taf.Steps
       
 
 
-        [Then(@"the response has status code (.*)")]
+        [Then(@"the response has status code (200|404|500)")]
         public void ThenTheResponseHasStatusCode(int expectedStatusCode)
         {
             HttpStatusCode statusCode = response.StatusCode;

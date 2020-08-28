@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Extensions;
 using System;
+using System.Net;
 using taf.Models;
 using TechTalk.SpecFlow;
 
@@ -12,6 +13,12 @@ namespace taf.Steps
     public class ValidRegisterSteps
 
     {
+        //ScenarioContext _scenarioContext;
+
+        //public ValidRegisterSteps(ScenarioContext scenarioContext)
+        //{
+        //    _scenarioContext = scenarioContext;
+        //}
 
         RestClient client;
         RestRequest request;
@@ -26,8 +33,11 @@ namespace taf.Steps
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/json", ParameterType.RequestBody);
         }
+
         
-        [When(@"I register account with ""(.*)"" and ""(.*)""")]
+                
+        //[When(@"I register account with ""(.*)"" and ""(.*)""")]
+        [When(@"I register account with ""(.*)"" and ""(.*)"""), Scope(Tag = "ValidRegister")]
         public void WhenIRegisterAccountWithAnd(string email, string password)
         {
             var accountInfo = new AccountInfo();
@@ -47,12 +57,20 @@ namespace taf.Steps
         }
 
         //[Then(@"the response has status code (.*)")]
-        //public void ThenTheResponseHasStatusCode(int p0)
-        //{
-        //    ScenarioContext.Current.Pending();
-        //}
+        [Then(@"the response has status code (.*)"), Scope(Tag = "ValidRegister")]
+        public void ThenTheResponseHasStatusCode(int expectedStatusCode)
+        {
+            HttpStatusCode statusCode = response.StatusCode;
+            int numericStatusCode = (int)statusCode;
 
-        
+            numericStatusCode.Should().Be(expectedStatusCode);
+            Console.Out.WriteLine("status code: {0}", numericStatusCode);
+
+            //Assert.That(numericStatusCode, Is.EqualTo(code))
+            //Assert.That((int)response.StatusCode, Is.EqualTo(code))
+        }
+
+
         [Then(@"the response should return a token")]
         public void ThenTheResponseShouldReturnAToken()
         {

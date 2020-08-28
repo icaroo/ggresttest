@@ -76,11 +76,11 @@ namespace taf.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("InvalidRegister")]
-        [NUnit.Framework.CategoryAttribute("mytag")]
+        [NUnit.Framework.CategoryAttribute("InvalidRegister")]
         public virtual void InvalidRegister()
         {
             string[] tagsOfScenario = new string[] {
-                    "mytag"};
+                    "InvalidRegister"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("InvalidRegister", null, tagsOfScenario, argumentsOfScenario);
 #line 7
@@ -105,6 +105,9 @@ this.ScenarioInitialize(scenarioInfo);
                 this.ScenarioStart();
 #line 8
  testRunner.Given("the endpoint is \"register\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 9
+ testRunner.When("I register account with \"eve.holt@reqres.in\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 11
  testRunner.Then("the response should return an error", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
