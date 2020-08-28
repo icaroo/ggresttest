@@ -109,9 +109,6 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
  testRunner.When("I register account with \"eve.holt@reqres.in\" and \"pistol\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 10
- testRunner.Then("the response has status code 200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
 #line 11
  testRunner.Then("the response should return a token", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

@@ -6,6 +6,6 @@
 @mytag
 Scenario: InvalidRegister
 	Given the endpoint is "register"
-	When I register account with "eve.holt@reqres.in"
+	#When I register account with "eve.holt@reqres.in"
 	Then the response has status code 400
 	Then the response should return an error

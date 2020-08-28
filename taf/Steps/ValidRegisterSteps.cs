@@ -18,11 +18,11 @@ namespace taf.Steps
             ScenarioContext.Current.Pending();
         }
         
-        [Then(@"the response has status code (.*)")]
-        public void ThenTheResponseHasStatusCode(int p0)
-        {
-            ScenarioContext.Current.Pending();
-        }
+        //[Then(@"the response has status code (.*)")]
+        //public void ThenTheResponseHasStatusCode(int p0)
+        //{
+        //    ScenarioContext.Current.Pending();
+        //}
         
         [Then(@"the response should return a token")]
         public void ThenTheResponseShouldReturnAToken()

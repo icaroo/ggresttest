@@ -106,9 +106,6 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
  testRunner.Given("the endpoint is \"register\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 9
- testRunner.When("I register account with \"eve.holt@reqres.in\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
 #line 10
  testRunner.Then("the response has status code 400", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
