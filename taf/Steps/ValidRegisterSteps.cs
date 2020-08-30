@@ -40,7 +40,7 @@ namespace taf.Steps
         [When(@"I register account with ""(.*)"" and ""(.*)"""), Scope(Tag = "ValidRegister")]
         public void WhenIRegisterAccountWithAnd(string email, string password)
         {
-            var accountInfo = new AccountInfo();
+            var accountInfo = new Registration();
             accountInfo.Email = email;
             accountInfo.Password = password;
 

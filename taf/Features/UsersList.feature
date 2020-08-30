@@ -8,6 +8,5 @@ Scenario: Request Users List
 	Given the endpoint name is "users"
 	When I retrieve the Users List
 	Then the response has status code 200
-	Then all users are listed in the response
+	Then the users are listed in the response
 
-	

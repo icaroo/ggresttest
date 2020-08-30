@@ -5,7 +5,7 @@ using System.Text;
 
 namespace taf.Models
 {
-    class AccountInfo
+   public class Registration
     {
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
        

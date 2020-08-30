@@ -30,7 +30,7 @@ namespace taf.Steps
         [When(@"I register account with ""(.*)"""), Scope(Tag = "InvalidRegister")]
         public void WhenIRegisterAccountWith(string email)
         {
-            var accountInfo = new AccountInfo();
+            var accountInfo = new Registration();
             accountInfo.Email = email;
            
 
@@ -68,12 +68,11 @@ namespace taf.Steps
             string res = response.Content;
 
             
-
             res.Should().NotBeNullOrEmpty();
 
            
             string statusDescription = response.StatusDescription;
-            string protocolVersion = response.ProtocolVersion.ToString();
+            
             Console.Out.WriteLine("statusDescription {0} ", statusDescription);
          
             
