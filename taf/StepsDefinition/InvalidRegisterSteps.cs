@@ -7,10 +7,10 @@ using taf.Helpers;
 using taf.Models;
 using TechTalk.SpecFlow;
 
-namespace taf.Steps
+namespace taf.StepsDefinition
 {
-    [Binding]
-    public class InvalidRegisterSteps
+    [Binding]   
+    public class InvalidRegisterSteps 
     {
 
         //IResponse represent a HTTP Response with Status, Headers and Body
@@ -18,14 +18,11 @@ namespace taf.Steps
 
         private RestAPI restApi;
 
+      
+
         [Given(@"the endpoint is ""(.*)"""), Scope(Tag = "InvalidRegister")]
         public void GivenTheEndpointIs(string endpoint)
         {
-            //client = new RestClient("https://reqres.in/api/");
-            //request = new RestRequest($"{endpoint}", Method.POST);
-            //request.AddHeader("Accept", "application/json");
-            //request.AddParameter("application/json", ParameterType.RequestBody);
-
             restApi = new RestAPI(endpoint);
 
         }
@@ -55,7 +52,7 @@ namespace taf.Steps
             //HttpStatusCode statusCode = response.StatusCode;
             //int numericStatusCode = (int)statusCode;
             //numericStatusCode.Should().Be(expectedStatusCode);
-            Console.Out.WriteLine("status code: {0}  - {1} ", response.StatusCode, response.StatusDescription);
+            Console.Out.WriteLine("status code: {0}  - {1} ", (int)response.StatusCode, response.StatusDescription);
 
             ((int)response.StatusCode).Should().Be(expectedStatusCode);
 
@@ -67,7 +64,7 @@ namespace taf.Steps
         [Then(@"the response should return an error")]
         public void ThenTheResponseShouldReturnAnError()
         {
-            
+
             RegistrationResponse apiResponseObj = restApi.PostResponse<RegistrationResponse>();
 
             //same output, different format
@@ -77,7 +74,7 @@ namespace taf.Steps
 
             apiResponseObj.Error.Should().NotBeNullOrEmpty();
 
-            
+
         }
     }
 }

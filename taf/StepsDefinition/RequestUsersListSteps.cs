@@ -8,7 +8,7 @@ using taf.Helpers;
 using taf.Models;
 using TechTalk.SpecFlow;
 
-namespace taf.Steps
+namespace taf.StepsDefinition
 {
     [Binding]
     public class RequestUsersListSteps
@@ -17,6 +17,8 @@ namespace taf.Steps
         IRestResponse response;
 
         RestAPI restApi;
+
+
 
         [Given(@"the endpoint name is ""(.*)""")]
         public void GivenTheEndpointNameIs(string endpoint)
@@ -41,7 +43,7 @@ namespace taf.Steps
             //HttpStatusCode statusCode = response.StatusCode;
             //int numericStatusCode = (int)statusCode;
             //numericStatusCode.Should().Be(expectedStatusCode);
-            Console.Out.WriteLine("status code: {0}  - {1} ", response.StatusCode, response.StatusDescription);
+            Console.Out.WriteLine("status code: {0}  - {1} ", (int)response.StatusCode, response.StatusDescription);
 
             ((int)response.StatusCode).Should().Be(expectedStatusCode);
 

@@ -3,6 +3,7 @@
 	using a valid email and password
 	I want to sucessfully register 
 
+
 	
 @ValidRegister
 Scenario: ValidRegister

@@ -3,6 +3,8 @@
 	using only an email
 	I want to unsuccessfully register and receive a message error
 
+
+
 @InvalidRegister
 Scenario: InvalidRegister
 	Given the endpoint is "register"
