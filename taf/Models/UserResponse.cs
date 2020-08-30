@@ -5,7 +5,7 @@ using System.Text;
 
 namespace taf.Models
 {
-    public partial  class RootObject
+    public partial  class UserResponse
     {
 
        

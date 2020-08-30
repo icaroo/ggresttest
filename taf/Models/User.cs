@@ -2,7 +2,7 @@
 
 namespace taf.Models
 {
-    public partial class RootObject
+    public partial class UserResponse
     {
         // RootObject myDeserializedClass = JsonConvert.DeserializeObject<RootObject>(myJsonResponse); 
         public class User

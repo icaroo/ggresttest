@@ -4,6 +4,7 @@ using RestSharp;
 using RestSharp.Extensions;
 using System;
 using System.Net;
+using taf.Helpers;
 using taf.Models;
 using TechTalk.SpecFlow;
 
@@ -20,23 +21,20 @@ namespace taf.Steps
         //    _scenarioContext = scenarioContext;
         //}
 
-        RestClient client;
-        RestRequest request;
+        
         // //IResponse represent a HTTP Response with Status, Headers and Body
         IRestResponse response;
+        private RestAPI restApi;
 
         [Given(@"the endpoint is ""(.*)""")]
         public void GivenTheEndpointIs(string endpoint)
         {
-            client = new RestClient("https://reqres.in/api/");
-            request = new RestRequest($"{endpoint}", Method.POST);
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("application/json", ParameterType.RequestBody);
+           restApi = new RestAPI(endpoint);
         }
 
         
                 
-        //[When(@"I register account with ""(.*)"" and ""(.*)""")]
+        
         [When(@"I register account with ""(.*)"" and ""(.*)"""), Scope(Tag = "ValidRegister")]
         public void WhenIRegisterAccountWithAnd(string email, string password)
         {
@@ -44,46 +42,45 @@ namespace taf.Steps
             accountInfo.Email = email;
             accountInfo.Password = password;
 
-
+            //same output, different format
+            //Console.Out.WriteLine("Using JsonConvert Users accountInfo {0}", JsonConvert.SerializeObject(accountInfo));
             Console.Out.WriteLine("Using ObjectDumper accountInfo results  {0}", ObjectDumper.Dump(accountInfo));
 
-            //same output, different format
-            Console.Out.WriteLine("Using JsonConvert Users accountInfo {0}", JsonConvert.SerializeObject(accountInfo));
-
-
-            request.AddJsonBody(JsonConvert.SerializeObject(accountInfo));
-
-            response = client.Execute(request);
+            response = restApi.PostRequest(accountInfo);
         }
 
         //[Then(@"the response has status code (.*)")]
         [Then(@"the response has status code (.*)"), Scope(Tag = "ValidRegister")]
         public void ThenTheResponseHasStatusCode(int expectedStatusCode)
         {
-            HttpStatusCode statusCode = response.StatusCode;
-            int numericStatusCode = (int)statusCode;
+            //HttpStatusCode statusCode = response.StatusCode;
+            //int numericStatusCode = (int)statusCode;
+            //numericStatusCode.Should().Be(expectedStatusCode);
+            Console.Out.WriteLine("status code: {0}  - {1} ", response.StatusCode, response.StatusDescription);
 
-            numericStatusCode.Should().Be(expectedStatusCode);
-            Console.Out.WriteLine("status code: {0}", numericStatusCode);
+            ((int)response.StatusCode).Should().Be(expectedStatusCode);
 
-            //Assert.That(numericStatusCode, Is.EqualTo(code))
-            //Assert.That((int)response.StatusCode, Is.EqualTo(code))
+            //Assert.That(numericStatusCode, Is.EqualTo(expectedStatusCode))
+            //Assert.That((int)response.StatusCode, Is.EqualTo(expectedStatusCode))
         }
 
 
         [Then(@"the response should return a token")]
         public void ThenTheResponseShouldReturnAToken()
         {
-            //var apiResponseObject = JsonConvert.DeserializeObject<>(response.Content);
 
-            Console.Out.WriteLine("Status {0}", response.StatusCode);
+            RegistrationResponse apiResponseObj = restApi.PostResponse<RegistrationResponse>();
 
-            Console.Out.WriteLine("Using ObjectDumper Register results  {0} - {1}", ObjectDumper.Dump((int)response.StatusCode), ObjectDumper.Dump(response.Content));
+            //same output, different format
+            //Console.Out.WriteLine("Using JsonConvert Error results {0}" , JsonConvert.SerializeObject(apiResponseObj));
+            Console.Out.WriteLine("output {0}", ObjectDumper.Dump(apiResponseObj));
+            Console.Out.WriteLine("Token {0}", ObjectDumper.Dump(apiResponseObj.Token));
 
-            string res = response.Content;
+            apiResponseObj.Token.Should().NotBeNullOrEmpty();
 
-            res.Should().NotBeNullOrEmpty();
-            
+                      
         }
+
+     
     }
 }

@@ -4,6 +4,7 @@ using RestSharp;
 using RestSharp.Serialization.Json;
 using System;
 using System.Net;
+using taf.Helpers;
 using taf.Models;
 using TechTalk.SpecFlow;
 
@@ -12,26 +13,23 @@ namespace taf.Steps
     [Binding]
     public class RequestUsersListSteps
     {
-        RestClient client;
-        RestRequest request;
-        // //IResponse represent a HTTP Response with Status, Headers and Body
+        //IResponse represent a HTTP Response with Status, Headers and Body
         IRestResponse response;
+
+        RestAPI restApi;
 
         [Given(@"the endpoint name is ""(.*)""")]
         public void GivenTheEndpointNameIs(string endpoint)
         {
-            client = new RestClient("https://reqres.in/api/");
-            request = new RestRequest($"{endpoint}", Method.GET);
+            restApi = new RestAPI(endpoint);
 
         }
 
         [When(@"I retrieve the Users List")]
         public void WhenIRetrieveTheUsersList()
         {
-            //Add parameter to filter amount of number
-            //request.AddParameter("per_page", 12);
-
-            response = client.Execute(request);
+                    
+            response = restApi.GetRequest();  
         }
 
       
@@ -40,16 +38,15 @@ namespace taf.Steps
         [Then(@"the response has status code (200|404|500)")]
         public void ThenTheResponseHasStatusCode(int expectedStatusCode)
         {
-            HttpStatusCode statusCode = response.StatusCode;
-            int numericStatusCode = (int)statusCode;
+            //HttpStatusCode statusCode = response.StatusCode;
+            //int numericStatusCode = (int)statusCode;
+            //numericStatusCode.Should().Be(expectedStatusCode);
+            Console.Out.WriteLine("status code: {0}  - {1} ", response.StatusCode, response.StatusDescription);
+
+            ((int)response.StatusCode).Should().Be(expectedStatusCode);
 
             //Assert.That(numericStatusCode, Is.EqualTo(expectedStatusCode))
             //Assert.That((int)response.StatusCode, Is.EqualTo(expectedStatusCode))
-            numericStatusCode.Should().Be(expectedStatusCode);
-
-            Console.Out.WriteLine("status code: {0}", numericStatusCode);
-
-            
 
         }
 
@@ -57,17 +54,20 @@ namespace taf.Steps
         public void ThenAllUsersAreListedInTheResponse()
         {
             
-            RootObject apiResponseObject = JsonConvert.DeserializeObject<RootObject>(response.Content);
+            UserResponse userResponseObj = JsonConvert.DeserializeObject<UserResponse>(response.Content);
 
-            Console.Out.WriteLine("Using ObjectDumper Users results  {0}", ObjectDumper.Dump(apiResponseObject.Users));
+            Console.Out.WriteLine("Users results  {0}", ObjectDumper.Dump(userResponseObj.Users));
 
             //same output, different format
-            //Console.Out.WriteLine("Using JsonConvert Users results {0}" , JsonConvert.SerializeObject(apiResponseObject.Users));
+            //Console.Out.WriteLine("Using JsonConvert Users results {0}" , JsonConvert.SerializeObject(userResponseObj.Users));
 
-            apiResponseObject.Users.Count.Should().Be(apiResponseObject.PerPage);
-            Console.Out.WriteLine("Users {0}  - PerPage {1} ", apiResponseObject.Users.Count, apiResponseObject.PerPage);
-            apiResponseObject.Users.Should().NotBeNull();
+            userResponseObj.Users.Count.Should().Be(userResponseObj.PerPage);
+            Console.Out.WriteLine("Users {0}  - PerPage {1} ", userResponseObj.Users.Count, userResponseObj.PerPage);
+            userResponseObj.Users.Should().NotBeNull();
 
         }
+
+
+       
     }
 }

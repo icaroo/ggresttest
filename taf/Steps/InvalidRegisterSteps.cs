@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Net;
+using taf.Helpers;
 using taf.Models;
 using TechTalk.SpecFlow;
 
@@ -12,18 +13,21 @@ namespace taf.Steps
     public class InvalidRegisterSteps
     {
 
-        RestClient client;
-        RestRequest request;
-        // //IResponse represent a HTTP Response with Status, Headers and Body
+        //IResponse represent a HTTP Response with Status, Headers and Body
         IRestResponse response;
+
+        private RestAPI restApi;
 
         [Given(@"the endpoint is ""(.*)"""), Scope(Tag = "InvalidRegister")]
         public void GivenTheEndpointIs(string endpoint)
         {
-            client = new RestClient("https://reqres.in/api/");
-            request = new RestRequest($"{endpoint}", Method.POST);
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("application/json", ParameterType.RequestBody);
+            //client = new RestClient("https://reqres.in/api/");
+            //request = new RestRequest($"{endpoint}", Method.POST);
+            //request.AddHeader("Accept", "application/json");
+            //request.AddParameter("application/json", ParameterType.RequestBody);
+
+            restApi = new RestAPI(endpoint);
+
         }
 
 
@@ -32,17 +36,15 @@ namespace taf.Steps
         {
             var accountInfo = new Registration();
             accountInfo.Email = email;
-           
 
-            Console.Out.WriteLine("Using ObjectDumper accountInfo results  {0}", ObjectDumper.Dump(accountInfo));
 
             //same output, different format
             //Console.Out.WriteLine("Using JsonConvert Users accountInfo {0}", JsonConvert.SerializeObject(accountInfo));
+            Console.Out.WriteLine("Registration results  {0}", ObjectDumper.Dump(accountInfo));
+
+            response = restApi.PostRequest(accountInfo);
 
 
-            request.AddJsonBody(JsonConvert.SerializeObject(accountInfo));
-
-            response = client.Execute(request);
         }
 
         
@@ -50,31 +52,31 @@ namespace taf.Steps
         [Then(@"the response has status code (.*)"), Scope(Tag = "InvalidRegister")]
         public void ThenTheResponseHasStatusCode(int expectedStatusCode)
         {
-            HttpStatusCode statusCode = response.StatusCode;
-            int numericStatusCode = (int)statusCode;
+            //HttpStatusCode statusCode = response.StatusCode;
+            //int numericStatusCode = (int)statusCode;
+            //numericStatusCode.Should().Be(expectedStatusCode);
+            Console.Out.WriteLine("status code: {0}  - {1} ", response.StatusCode, response.StatusDescription);
 
-            numericStatusCode.Should().Be(expectedStatusCode);
-            Console.Out.WriteLine("Status Code: {0} - {1}", numericStatusCode, response.StatusCode);
+            ((int)response.StatusCode).Should().Be(expectedStatusCode);
+
+            //Assert.That(numericStatusCode, Is.EqualTo(expectedStatusCode))
+            //Assert.That((int)response.StatusCode, Is.EqualTo(expectedStatusCode))
         }
 
 
         [Then(@"the response should return an error")]
         public void ThenTheResponseShouldReturnAnError()
         {
-            Console.Out.WriteLine("Status {0}", response.StatusCode);
-
-            Console.Out.WriteLine("Invalid Register results  {0} - {1}", ObjectDumper.Dump((int)response.StatusCode), ObjectDumper.Dump(response.Content));
-
-            string res = response.Content;
-
             
-            res.Should().NotBeNullOrEmpty();
+            RegistrationResponse apiResponseObj = restApi.PostResponse<RegistrationResponse>();
 
-           
-            string statusDescription = response.StatusDescription;
-            
-            Console.Out.WriteLine("statusDescription {0} ", statusDescription);
-         
+            //same output, different format
+            //Console.Out.WriteLine("Using JsonConvert Error results {0}" , JsonConvert.SerializeObject(apiResponseObj));
+            Console.Out.WriteLine("output {0}", ObjectDumper.Dump(apiResponseObj));
+            Console.Out.WriteLine("Error results  {0}", ObjectDumper.Dump(apiResponseObj.Error));
+
+            apiResponseObj.Error.Should().NotBeNullOrEmpty();
+
             
         }
     }

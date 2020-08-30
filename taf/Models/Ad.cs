@@ -2,7 +2,7 @@
 
 namespace taf.Models
 {
-    public partial class RootObject
+    public partial class UserResponse
     {
         public class Ad
         {
