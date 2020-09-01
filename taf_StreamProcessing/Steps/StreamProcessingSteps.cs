@@ -24,7 +24,7 @@ namespace taf_StreamProcessing.Steps
     public class StreamProcessingSteps
     {
      
-        private KafkaSetting kafkaSettings = new KafkaSetting();
+        
       
         List<string> receivedMessages = new List<string>();
 
@@ -34,67 +34,20 @@ namespace taf_StreamProcessing.Steps
 
         List<Car> carsReceived = new List<Car>();
 
+        Producer producer = new Producer();
+
+        Consumer consumer = new Consumer();
 
         [Given(@"I have cars data messages")]
         public void GivenIHaveCarsDataMessages()
         {
-          
-            var myJsonString = File.ReadAllText("..\\..\\..\\carsData.json");
-            var myJsonObject = JsonConvert.DeserializeObject<Car>(myJsonString);
-            Console.Out.WriteLine("myJsonObject datata {0}", ObjectDumper.Dump(myJsonObject));
+            cars = JsonConvertObject.GenerateData<Car>();
 
-            //option 1
-            //cars = myJsonObject.Cars;
-            //option 2
-            cars = JsonConvertObject.ToObjectData<Car>(myJsonString);
+            Console.Out.WriteLine("JsonObject data {0}", ObjectDumper.Dump(cars));
 
-            Console.Out.WriteLine("myJsonObject datata {0}", ObjectDumper.Dump(cars));
+            producedMessages = producer.CreateProducer(cars);
 
-
-            var producerConfig = new ProducerConfig
-            {
-                BootstrapServers = kafkaSettings.BootstrapServers
-            };
-
-
-            //Create the Producer
-            using (var producer = new ProducerBuilder<string, string>(producerConfig).Build())
-            {
-                try
-                {
-                    foreach (Car car in cars)
-                    {
-                        var key = "car";
-
-                        var val = JObject.FromObject(car).ToString(Formatting.None);
-
-                        producedMessages.Add(val);
-
-                        Console.WriteLine($"Producing record: {key} {val}");
-
-                        producer.Produce(kafkaSettings.Topic, new Message<string, string> { Key = key, Value = val },
-                            (deliveryReport) =>
-                            {
-                                if (deliveryReport.Error.Code != ErrorCode.NoError)
-                                {
-                                    Console.WriteLine($"Failed to deliver message: {deliveryReport.Error.Reason}");
-                                }
-                                else
-                                {
-                                    Console.WriteLine($"Produced message to TopicPartitionOffset : {deliveryReport.TopicPartitionOffset}");
-
-                                }
-                            });
-                    }
-                    producer.Flush(TimeSpan.FromSeconds(5));
-                }
-                catch (Exception prodError)
-                {
-
-                    Console.Out.WriteLine("Produce error {0}", prodError);
-                }
-                
-            }
+            Console.Out.WriteLine("producedMessages data {0}", ObjectDumper.Dump(producedMessages));
 
         }
        
@@ -106,73 +59,10 @@ namespace taf_StreamProcessing.Steps
         public void ThenIShouldReceiveAListOfCarsMessages()
         {
             
-            List<string> consumedMessages = new List<string>();
+            //List<string> consumedMessages = new List<string>();
 
-            var consumerConfig = new ConsumerConfig
-            {
-                BootstrapServers = kafkaSettings.BootstrapServers,
-                GroupId = kafkaSettings.GroupId,
-                AutoOffsetReset = kafkaSettings.AutoOffsetReset,
-                EnableAutoCommit = kafkaSettings.EnableAutoCommit,
-                AutoCommitIntervalMs = kafkaSettings.AutoCommitIntervalMs,
-                SessionTimeoutMs = kafkaSettings.SessionTimeoutMs,
+            (receivedMessages, carsReceived) = consumer.CreateConsumer<Car>();
 
-            };
-
-            CancellationTokenSource cancToken = new CancellationTokenSource();
-            
-            cancToken.CancelAfter((int)consumerConfig.SessionTimeoutMs);
-
-            //Create the Consumer
-            using (var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build())
-            {
-                try
-                {
-                    //Subscribe to the Kafka topic
-                    consumer.Subscribe(new List<string>() { kafkaSettings.Topic });
-
-
-                    while (!cancToken.IsCancellationRequested)
-                    {
-                        if (consumer != null)
-                        {
-                            try
-                            {
-                                var result = consumer.Consume(cancToken.Token);
-
-                                //using Car object
-                                carsReceived.Add(JsonConvertObject.ToSingleObjectData<Car>(result.Message.Value));
-
-                                //using List
-                                consumedMessages.Add(result.Message.Value);
-                                
-
-                                Console.Out.WriteLine("consumedMessages Data {0}", ObjectDumper.Dump(consumedMessages));
-
-                                //check for duplicate list
-                                receivedMessages = consumedMessages.Distinct().ToList();
-                            }
-                            catch (OperationCanceledException consumeCanceled)
-                            {
-                                consumer.Unsubscribe();
-
-                                consumer.Close();
-
-                                Console.Out.WriteLine(" Cancellation Resquested - consumer Unsubscribe - consumer Close ");
-                            }
-                            catch (ConsumeException consumeError)
-                            {
-                                Console.Out.WriteLine(" Consume error {0}", consumeError);
-                            }
-                        }
-                    }
-                }
-
-                catch (Exception ex)
-                {
-                    Console.Out.WriteLine("Subscribe error {0}", ex);
-                }
-            }
 
         }
 
