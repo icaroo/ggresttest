@@ -1,0 +1,17 @@
+{
+  "data":[
+    {
+      "Brand": "fiat",
+      "Model": "palio",
+      "Doors": "4",
+      "IsSport": "false"
+    },
+
+    {
+      "Brand": "fiat",
+      "Model": "uno",
+      "Doors": "4",
+      "IsSport": "true"
+    }
+  ]
+}
